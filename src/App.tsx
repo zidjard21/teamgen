@@ -4,6 +4,10 @@ import "./App.css";
 
 import "./scss/styles.scss";
 
+// SVG images
+import deleteIcon from "./assets/delete-svgrepo-com.svg";
+import updateIcon from "./assets/pencil-svgrepo-com.svg";
+
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -142,57 +146,69 @@ function App() {
 
   return (
     <>
-      <ListGroup className="my-4">
-        {players.map((player) => (
-          <ListGroup.Item key={player.id}>
-            <Container fluid>
-              <Row>
-                <Col>{player.id}</Col>
-                <Col>{player.name}</Col>
-                <Col>{player.level}</Col>
-                <Col>
-                  <Button onClick={() => playerToBeUpdated(player.id)}>
-                    U
-                  </Button>
-                  <Button onClick={() => deletePlayer(player.id)}>X</Button>
-                </Col>
-              </Row>
-            </Container>
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-
-      <Button variant="primary" onClick={handleShow}>
-        Add player
-      </Button>
-      <Button variant="success" onClick={generateTeams}>
-        Generate teams
-      </Button>
-
-      <ListGroup className="my-4">
-        <Container>
-          <Row>
-            <Col>Team A</Col>
-            <Col>Team B</Col>
-          </Row>
-          <Row>
-            <Col>
-              {teams?.teamA?.map((e) => (
-                <Row key={e.id}>{e.name}</Row>
+      <Container>
+        <Row>
+          <Col>
+            <Button variant="primary" className="mx-2" onClick={handleShow}>
+              Add player
+            </Button>
+            <Button variant="success" className="mx-2" onClick={generateTeams}>
+              Generate teams
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <ListGroup className="my-4">
+              {players.map((player) => (
+                <ListGroup.Item key={player.id}>
+                  <Container fluid>
+                    <Row className="align-items-center" style={{flexWrap:"nowrap"}}>
+                      <Col>{player.id}</Col>
+                      <Col style={{flexBasis: "fit-content"}}>{player.name}</Col>
+                      <Col>{player.level}</Col>
+                      <Col className="d-flex gap-2">
+                        <Button className="d-inline-block" onClick={() => playerToBeUpdated(player.id)}>
+                          <img src={updateIcon} style={{width:"15px"}} alt="Update" />
+                        </Button>
+                        <Button className="d-inline-block" onClick={() => deletePlayer(player.id)}>
+                          <img src={deleteIcon} style={{width:"15px"}} alt="Delete" />
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Container>
+                </ListGroup.Item>
               ))}
-            </Col>
-            <Col>
-              {teams?.teamB?.map((e) => (
-                <Row key={e.id}>{e.name}</Row>
-              ))}
-            </Col>
-          </Row>
-          <Row>
-            <Col>Total Level: {teams?.totalLevelA}</Col>
-            <Col>Total Level: {teams?.totalLevelB}</Col>
-          </Row>
-        </Container>
-      </ListGroup>
+            </ListGroup>
+          </Col>
+          <Col>
+            <ListGroup className="my-4">
+              <Container>
+                <Row>
+                  <Col>Team A</Col>
+                  <Col>Team B</Col>
+                </Row>
+                <Row>
+                  <Col>
+                    {teams?.teamA?.map((e) => (
+                      <Row key={e.id}>{e.name}</Row>
+                    ))}
+                  </Col>
+                  <Col>
+                    {teams?.teamB?.map((e) => (
+                      <Row key={e.id}>{e.name}</Row>
+                    ))}
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>Total Level: {teams?.totalLevelA}</Col>
+                  <Col>Total Level: {teams?.totalLevelB}</Col>
+                </Row>
+              </Container>
+            </ListGroup>
+          </Col>
+        </Row>
+      </Container>
 
       {/* Modal */}
       <Modal show={show} onHide={handleClose}>
