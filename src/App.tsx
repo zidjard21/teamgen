@@ -135,7 +135,11 @@ function App() {
   };
 
   const generateTeams = () => {
-    if (players.length % 2 !== 0 || players === undefined || players.length == 0) {
+    if (
+      players.length % 2 !== 0 ||
+      players === undefined ||
+      players.length == 0
+    ) {
       evenAlert.handleShowAlert();
       return;
     }
@@ -178,7 +182,12 @@ function App() {
                       style={{ flexWrap: "nowrap" }}
                     >
                       <Col>{player.id}</Col>
-                      <Col style={{ flexBasis: "fit-content", width: "max-content" }}>
+                      <Col
+                        style={{
+                          flexBasis: "fit-content",
+                          width: "max-content",
+                        }}
+                      >
                         {player.name}
                       </Col>
                       <Col>{player.level}</Col>
@@ -212,39 +221,57 @@ function App() {
               ))}
             </ListGroup>
           </Col>
-          {teams&&<Col>
-            <ListGroup className="my-4">
-              <Container>
-                <Row>
-                  <Col style={{ fontWeight: "bold" }}>Team A</Col>
-                  <Col style={{ fontWeight: "bold" }}>Team B</Col>
-                </Row>
-                <Row>
-                  <Col>
-                    {teams?.teamA?.map((e) => (
-                      <Row style={{flexDirection: "column"}} key={e.id}>{e.name}</Row>
-                    ))}
-                  </Col>
-                  <Col>
-                    {teams?.teamB?.map((e) => (
-                      <Row style={{flexDirection: "column"}} key={e.id}>{e.name}</Row>
-                    ))}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={{ fontWeight: "bold" }}>Total Level: <span style={{ fontWeight: "normal" }}>{teams?.totalLevelA}</span></Col>
-                  <Col style={{ fontWeight: "bold" }}>Total Level: <span style={{ fontWeight: "normal" }}>{teams?.totalLevelB}</span></Col>
-                </Row>
-              </Container>
-            </ListGroup>
-          </Col>}
+          {teams && (
+            <Col>
+              <ListGroup className="my-4">
+                <Container>
+                  <Row>
+                    <Col style={{ fontWeight: "bold" }}>Team A</Col>
+                    <Col style={{ fontWeight: "bold" }}>Team B</Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      {teams?.teamA?.map((e) => (
+                        <Row style={{ flexDirection: "column" }} key={e.id}>
+                          {e.name}
+                        </Row>
+                      ))}
+                    </Col>
+                    <Col>
+                      {teams?.teamB?.map((e) => (
+                        <Row style={{ flexDirection: "column" }} key={e.id}>
+                          {e.name}
+                        </Row>
+                      ))}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col style={{ fontWeight: "bold" }}>
+                      Total Level:{" "}
+                      <span style={{ fontWeight: "normal" }}>
+                        {teams?.totalLevelA}
+                      </span>
+                    </Col>
+                    <Col style={{ fontWeight: "bold" }}>
+                      Total Level:{" "}
+                      <span style={{ fontWeight: "normal" }}>
+                        {teams?.totalLevelB}
+                      </span>
+                    </Col>
+                  </Row>
+                </Container>
+              </ListGroup>
+            </Col>
+          )}
         </Row>
       </Container>
 
       {/* Modal */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{editingPlayerId === 0 ? "Add player" : "Edit player"}</Modal.Title>
+          <Modal.Title>
+            {editingPlayerId === 0 ? "Add player" : "Edit player"}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Alert
