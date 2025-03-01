@@ -16,6 +16,8 @@ import Alert from "react-bootstrap/Alert";
 
 import { Col, Container, Row } from "react-bootstrap";
 
+import useAlert from "./components/Alert";
+
 import { splitPlayersIntoTeams } from "./logic.ts";
 
 export interface Player {
@@ -50,15 +52,8 @@ const dummy: Player[] = [
 
 function App() {
   // Alert
-  const [showAlert, setShowAlert] = useState(false);
-
-  const handleCloseAlert = () => {
-    setShowAlert(false);
-  };
-  const handleShowAlert = () => {
-    setShowAlert(true);
-    setTimeout(() => handleCloseAlert(), 2000);
-  };
+  const modalAlert = useAlert();
+  const evenAlert = useAlert();
 
   // Modal
   const [show, setShow] = useState(false);
@@ -74,8 +69,8 @@ function App() {
   // Data logic
   const [currentId, setCurrentId] = useState(100);
 
-  // const [players, setPlayers] = useState<Player[]>([]);
-  const [players, setPlayers] = useState<Player[]>(dummy);
+  const [players, setPlayers] = useState<Player[]>([]);
+  // const [players, setPlayers] = useState<Player[]>(dummy);
 
   const [playerName, setplayerName] = useState<string>("");
   const [playerLevel, setplayerLevel] = useState<number>(1);
@@ -86,7 +81,7 @@ function App() {
 
   const addPlayer = (newPlayerName: string, newPlayerLevel: number) => {
     if (newPlayerName == "" || newPlayerLevel == 0) {
-      handleShowAlert();
+      modalAlert.handleShowAlert();
       return;
     }
 
@@ -125,7 +120,7 @@ function App() {
     if (editingPlayerId === 0) return;
 
     if (playerName == "" || playerLevel == 0) {
-      handleShowAlert();
+      modalAlert.handleShowAlert();
       return;
     }
 
@@ -140,6 +135,11 @@ function App() {
   };
 
   const generateTeams = () => {
+    if (players.length % 2 !== 0 || players === undefined || players.length == 0) {
+      evenAlert.handleShowAlert();
+      return;
+    }
+
     const newTeams = splitPlayersIntoTeams(players);
     setTeams(newTeams);
   };
@@ -147,6 +147,16 @@ function App() {
   return (
     <>
       <Container>
+        <Alert
+          key={"danger"}
+          variant={"danger"}
+          show={evenAlert.showAlert}
+          className="position-area-top"
+          style={{ position: "absolute", zIndex: "10", width: "75%" }}
+        >
+          The number of players is uneven! Add or delete players to have an even
+          number of players.
+        </Alert>
         <Row>
           <Col>
             <Button variant="primary" className="mx-2" onClick={handleShow}>
@@ -163,16 +173,37 @@ function App() {
               {players.map((player) => (
                 <ListGroup.Item key={player.id}>
                   <Container fluid>
-                    <Row className="align-items-center" style={{flexWrap:"nowrap"}}>
+                    <Row
+                      className="align-items-center"
+                      style={{ flexWrap: "nowrap" }}
+                    >
                       <Col>{player.id}</Col>
-                      <Col style={{flexBasis: "fit-content"}}>{player.name}</Col>
+                      <Col style={{ flexBasis: "fit-content", width: "max-content" }}>
+                        {player.name}
+                      </Col>
                       <Col>{player.level}</Col>
                       <Col className="d-flex gap-2">
-                        <Button className="d-inline-block" onClick={() => playerToBeUpdated(player.id)}>
-                          <img src={updateIcon} style={{width:"15px"}} alt="Update" />
+                        <Button
+                          className="d-inline-block"
+                          variant="warning"
+                          onClick={() => playerToBeUpdated(player.id)}
+                        >
+                          <img
+                            src={updateIcon}
+                            style={{ width: "15px" }}
+                            alt="Update"
+                          />
                         </Button>
-                        <Button className="d-inline-block" onClick={() => deletePlayer(player.id)}>
-                          <img src={deleteIcon} style={{width:"15px"}} alt="Delete" />
+                        <Button
+                          className="d-inline-block"
+                          variant="danger"
+                          onClick={() => deletePlayer(player.id)}
+                        >
+                          <img
+                            src={deleteIcon}
+                            style={{ width: "15px" }}
+                            alt="Delete"
+                          />
                         </Button>
                       </Col>
                     </Row>
@@ -181,42 +212,48 @@ function App() {
               ))}
             </ListGroup>
           </Col>
-          <Col>
+          {teams&&<Col>
             <ListGroup className="my-4">
               <Container>
                 <Row>
-                  <Col>Team A</Col>
-                  <Col>Team B</Col>
+                  <Col style={{ fontWeight: "bold" }}>Team A</Col>
+                  <Col style={{ fontWeight: "bold" }}>Team B</Col>
                 </Row>
                 <Row>
                   <Col>
                     {teams?.teamA?.map((e) => (
-                      <Row key={e.id}>{e.name}</Row>
+                      <Row style={{flexDirection: "column"}} key={e.id}>{e.name}</Row>
                     ))}
                   </Col>
                   <Col>
                     {teams?.teamB?.map((e) => (
-                      <Row key={e.id}>{e.name}</Row>
+                      <Row style={{flexDirection: "column"}} key={e.id}>{e.name}</Row>
                     ))}
                   </Col>
                 </Row>
                 <Row>
-                  <Col>Total Level: {teams?.totalLevelA}</Col>
-                  <Col>Total Level: {teams?.totalLevelB}</Col>
+                  <Col style={{ fontWeight: "bold" }}>Total Level: <span style={{ fontWeight: "normal" }}>{teams?.totalLevelA}</span></Col>
+                  <Col style={{ fontWeight: "bold" }}>Total Level: <span style={{ fontWeight: "normal" }}>{teams?.totalLevelB}</span></Col>
                 </Row>
               </Container>
             </ListGroup>
-          </Col>
+          </Col>}
         </Row>
       </Container>
 
       {/* Modal */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add player</Modal.Title>
+          <Modal.Title>{editingPlayerId === 0 ? "Add player" : "Edit player"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Alert key={"danger"} variant={"danger"} show={showAlert}>
+          <Alert
+            key={"danger"}
+            variant={"danger"}
+            show={modalAlert.showAlert}
+            className="position-area-top"
+            style={{ position: "absolute", zIndex: "10", width: "90%" }}
+          >
             Do not forget to enter the name of the player!
           </Alert>
           <Form>
